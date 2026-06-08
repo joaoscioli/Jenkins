@@ -18,9 +18,9 @@ professional CI/CD lab.
 
 ## Phase 3: Spring Boot Delivery
 
-- Add pipeline notes for Spring Boot APIs.
-- Include test reports and build artifacts.
-- Document how CI supports code review and release confidence.
+- Add pipeline notes for Spring Boot APIs. Done.
+- Include test reports and build artifacts. Done.
+- Document how CI supports code review and release confidence. Done.
 
 ## Phase 4: Docker and Deployment
 

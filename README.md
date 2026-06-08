@@ -33,13 +33,14 @@ Current sections:
 - [Java Maven Pipeline](docs/java-maven-pipeline.md);
 - [Docker Image Pipeline](docs/docker-image-pipeline.md);
 - [Deployment Checklist](docs/deployment-checklist.md);
+- [Spring Boot Delivery Notes](docs/spring-boot-delivery.md);
 - [Troubleshooting Guide](docs/troubleshooting.md);
 - [Repository Roadmap](docs/roadmap.md).
 
 Planned sections:
 
 - Jenkins fundamentals;
-- Spring Boot delivery notes.
+- production deployment examples.
 
 ## Portfolio Role
 
@@ -54,7 +55,7 @@ discipline, and the ability to explain engineering workflows clearly.
 - [x] Add a troubleshooting guide for common Jenkins failures.
 - [x] Add a Docker-oriented pipeline example.
 - [x] Add a deployment checklist.
-- [ ] Connect the examples to a Spring Boot API repository.
+- [x] Connect the examples to a Spring Boot API repository.
 
 ## Repository Principles
 
