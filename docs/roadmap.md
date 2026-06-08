@@ -28,7 +28,7 @@ professional CI/CD lab.
 - Document environment configuration. Done.
 - Explain when deployment should be automatic and when it should require
   approval. Done.
-- Add deployment checklist.
+- Add deployment checklist. Done.
 
 ## Phase 5: Troubleshooting
 
