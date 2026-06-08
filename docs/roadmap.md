@@ -12,9 +12,9 @@ professional CI/CD lab.
 
 ## Phase 2: First Java Pipeline
 
-- Add a declarative Jenkinsfile for a Maven project.
-- Include checkout, test, package, and archive stages.
-- Explain what each stage proves in an engineering interview.
+- Add a declarative Jenkinsfile for a Maven project. Done.
+- Include checkout, test, package, and archive stages. Done.
+- Explain what each stage proves in an engineering interview. Done.
 
 ## Phase 3: Spring Boot Delivery
 

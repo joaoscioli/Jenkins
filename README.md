@@ -28,12 +28,14 @@ engineering practices:
 The first version of this repository will focus on a Java and Spring Boot
 pipeline.
 
+Current sections:
+
+- [Java Maven Pipeline](docs/java-maven-pipeline.md);
+- [Repository Roadmap](docs/roadmap.md).
+
 Planned sections:
 
 - Jenkins fundamentals;
-- declarative pipeline syntax;
-- Maven build pipeline;
-- unit and integration test stages;
 - Docker image build;
 - deployment checklist;
 - common pipeline failures and how to debug them.
@@ -46,8 +48,8 @@ discipline, and the ability to explain engineering workflows clearly.
 
 ## Roadmap
 
-- [ ] Add a first declarative Jenkins pipeline for a Maven project.
-- [ ] Document each pipeline stage and its purpose.
+- [x] Add a first declarative Jenkins pipeline for a Maven project.
+- [x] Document each pipeline stage and its purpose.
 - [ ] Add a troubleshooting guide for common Jenkins failures.
 - [ ] Add a Docker-oriented pipeline example.
 - [ ] Connect the examples to a Spring Boot API repository.
