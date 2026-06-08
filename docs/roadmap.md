@@ -24,14 +24,15 @@ professional CI/CD lab.
 
 ## Phase 4: Docker and Deployment
 
-- Add Docker image build stages.
-- Document environment configuration.
+- Add Docker image build stages. Done.
+- Document environment configuration. Done.
 - Explain when deployment should be automatic and when it should require
-  approval.
+  approval. Done.
+- Add deployment checklist.
 
 ## Phase 5: Troubleshooting
 
 - Document common Jenkins pipeline failures. Done.
 - Add examples for broken tests and missing credentials. Done.
-- Add examples for failed Docker builds.
+- Add examples for failed Docker builds. Partially done.
 - Explain how to read logs and isolate failures. Done.

@@ -1,0 +1,81 @@
+pipeline {
+    agent any
+
+    parameters {
+        booleanParam(
+                name: 'PUSH_IMAGE',
+                defaultValue: false,
+                description: 'Push the Docker image to the registry after a successful build.'
+        )
+    }
+
+    environment {
+        IMAGE_NAME = 'joaoscioli/spring-boot-api'
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        REGISTRY_CREDENTIALS_ID = 'docker-registry-credentials'
+    }
+
+    options {
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                sh './mvnw -B --no-transfer-progress package -DskipTests'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+            }
+        }
+
+        stage('Inspect Image') {
+            steps {
+                sh 'docker image inspect $IMAGE_NAME:$IMAGE_TAG'
+            }
+        }
+
+        stage('Push Docker Image') {
+            when {
+                expression { params.PUSH_IMAGE }
+            }
+            steps {
+                withCredentials([
+                        usernamePassword(
+                                credentialsId: env.REGISTRY_CREDENTIALS_ID,
+                                usernameVariable: 'REGISTRY_USERNAME',
+                                passwordVariable: 'REGISTRY_PASSWORD'
+                        )
+                ]) {
+                    sh '''
+                        echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USERNAME" --password-stdin
+                        docker push "$IMAGE_NAME:$IMAGE_TAG"
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker logout || true'
+        }
+        success {
+            echo "Docker pipeline completed for $IMAGE_NAME:$IMAGE_TAG."
+        }
+        failure {
+            echo 'Docker pipeline failed. Check build, image, and credentials logs.'
+        }
+    }
+}

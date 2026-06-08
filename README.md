@@ -31,13 +31,13 @@ pipeline.
 Current sections:
 
 - [Java Maven Pipeline](docs/java-maven-pipeline.md);
+- [Docker Image Pipeline](docs/docker-image-pipeline.md);
 - [Troubleshooting Guide](docs/troubleshooting.md);
 - [Repository Roadmap](docs/roadmap.md).
 
 Planned sections:
 
 - Jenkins fundamentals;
-- Docker image build;
 - deployment checklist;
 - Spring Boot delivery notes.
 
@@ -52,7 +52,7 @@ discipline, and the ability to explain engineering workflows clearly.
 - [x] Add a first declarative Jenkins pipeline for a Maven project.
 - [x] Document each pipeline stage and its purpose.
 - [x] Add a troubleshooting guide for common Jenkins failures.
-- [ ] Add a Docker-oriented pipeline example.
+- [x] Add a Docker-oriented pipeline example.
 - [ ] Connect the examples to a Spring Boot API repository.
 
 ## Repository Principles
