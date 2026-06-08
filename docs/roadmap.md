@@ -31,6 +31,7 @@ professional CI/CD lab.
 
 ## Phase 5: Troubleshooting
 
-- Document common Jenkins pipeline failures.
-- Add examples for broken tests, missing credentials, and failed Docker builds.
-- Explain how to read logs and isolate failures.
+- Document common Jenkins pipeline failures. Done.
+- Add examples for broken tests and missing credentials. Done.
+- Add examples for failed Docker builds.
+- Explain how to read logs and isolate failures. Done.
