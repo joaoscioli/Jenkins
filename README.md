@@ -34,6 +34,7 @@ Current sections:
 - [Java Maven Pipeline](docs/java-maven-pipeline.md);
 - [Docker Image Pipeline](docs/docker-image-pipeline.md);
 - [Deployment Checklist](docs/deployment-checklist.md);
+- [Production Deployment Notes](docs/production-deployment.md);
 - [Spring Boot Delivery Notes](docs/spring-boot-delivery.md);
 - [Troubleshooting Guide](docs/troubleshooting.md);
 - [Repository Roadmap](docs/roadmap.md).
