@@ -30,6 +30,7 @@ pipeline.
 
 Current sections:
 
+- [Jenkins Fundamentals](docs/jenkins-fundamentals.md);
 - [Java Maven Pipeline](docs/java-maven-pipeline.md);
 - [Docker Image Pipeline](docs/docker-image-pipeline.md);
 - [Deployment Checklist](docs/deployment-checklist.md);
@@ -39,7 +40,6 @@ Current sections:
 
 Planned sections:
 
-- Jenkins fundamentals;
 - production deployment examples.
 
 ## Portfolio Role
