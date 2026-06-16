@@ -36,6 +36,7 @@ Current sections:
 - [Docker Image Pipeline](docs/docker-image-pipeline.md);
 - [Deployment Checklist](docs/deployment-checklist.md);
 - [Production Deployment Notes](docs/production-deployment.md);
+- [Release Strategy](docs/release-strategy.md);
 - [Spring Boot Delivery Notes](docs/spring-boot-delivery.md);
 - [Troubleshooting Guide](docs/troubleshooting.md);
 - [Repository Roadmap](docs/roadmap.md).
