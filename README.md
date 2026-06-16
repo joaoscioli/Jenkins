@@ -35,6 +35,7 @@ Current sections:
 - [Pipeline Review Checklist](docs/pipeline-review-checklist.md);
 - [Docker Image Pipeline](docs/docker-image-pipeline.md);
 - [Deployment Checklist](docs/deployment-checklist.md);
+- [Environment Strategy](docs/environment-strategy.md);
 - [Production Deployment Notes](docs/production-deployment.md);
 - [Release Strategy](docs/release-strategy.md);
 - [Spring Boot Delivery Notes](docs/spring-boot-delivery.md);
