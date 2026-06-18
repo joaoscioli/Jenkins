@@ -38,6 +38,7 @@ Current sections:
 - [Environment Strategy](docs/environment-strategy.md);
 - [Production Deployment Notes](docs/production-deployment.md);
 - [Release Strategy](docs/release-strategy.md);
+- [Rollback Strategy](docs/rollback-strategy.md);
 - [Spring Boot Delivery Notes](docs/spring-boot-delivery.md);
 - [Troubleshooting Guide](docs/troubleshooting.md);
 - [Repository Roadmap](docs/roadmap.md).
