@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'jdk-21'
+        maven 'maven-3'
+    }
+
+    options {
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                sh './mvnw -B --no-transfer-progress compile'
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                sh './mvnw -B --no-transfer-progress test'
+            }
+            post {
+                always {
+                    junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: false
+                }
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                sh './mvnw -B --no-transfer-progress verify -Pintegration-tests'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh './mvnw -B --no-transfer-progress package -DskipTests'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Quality gates passed.'
+        }
+        failure {
+            echo 'Quality gates failed. Review logs before merging.'
+        }
+    }
+}

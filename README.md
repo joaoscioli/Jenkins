@@ -43,6 +43,12 @@ Current sections:
 - [Troubleshooting Guide](docs/troubleshooting.md);
 - [Repository Roadmap](docs/roadmap.md).
 
+Pipeline examples:
+
+- [Java Maven Pipeline](pipelines/java-maven/Jenkinsfile);
+- [Docker Image Pipeline](pipelines/docker-image/Jenkinsfile);
+- [Spring Boot Quality Gates Pipeline](pipelines/spring-boot-quality-gates/Jenkinsfile).
+
 Planned sections:
 
 - production deployment examples.
