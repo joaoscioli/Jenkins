@@ -33,6 +33,7 @@ Current sections:
 - [Jenkins Fundamentals](docs/jenkins-fundamentals.md);
 - [Java Maven Pipeline](docs/java-maven-pipeline.md);
 - [Pipeline Review Checklist](docs/pipeline-review-checklist.md);
+- [Pipeline Review Playbook](docs/pipeline-review-playbook.md);
 - [Docker Image Pipeline](docs/docker-image-pipeline.md);
 - [Deployment Checklist](docs/deployment-checklist.md);
 - [Environment Strategy](docs/environment-strategy.md);
