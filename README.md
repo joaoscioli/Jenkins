@@ -37,6 +37,7 @@ Current sections:
 - [Docker Image Pipeline](docs/docker-image-pipeline.md);
 - [Deployment Checklist](docs/deployment-checklist.md);
 - [Environment Strategy](docs/environment-strategy.md);
+- [Credentials And Secrets](docs/credentials-and-secrets.md);
 - [Quality Gates](docs/quality-gates.md);
 - [Production Deployment Notes](docs/production-deployment.md);
 - [Release Strategy](docs/release-strategy.md);
