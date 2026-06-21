@@ -32,6 +32,7 @@ Current sections:
 
 - [Jenkins Fundamentals](docs/jenkins-fundamentals.md);
 - [Jenkins Agent Strategy](docs/agent-strategy.md);
+- [Artifact Strategy](docs/artifact-strategy.md);
 - [Java Maven Pipeline](docs/java-maven-pipeline.md);
 - [Pipeline Review Checklist](docs/pipeline-review-checklist.md);
 - [Pipeline Review Playbook](docs/pipeline-review-playbook.md);
