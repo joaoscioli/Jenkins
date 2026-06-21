@@ -38,6 +38,7 @@ Current sections:
 - [Deployment Checklist](docs/deployment-checklist.md);
 - [Environment Strategy](docs/environment-strategy.md);
 - [Credentials And Secrets](docs/credentials-and-secrets.md);
+- [CI Security Checklist](docs/ci-security-checklist.md);
 - [Quality Gates](docs/quality-gates.md);
 - [Production Deployment Notes](docs/production-deployment.md);
 - [Release Strategy](docs/release-strategy.md);
