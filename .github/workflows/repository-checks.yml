@@ -1,0 +1,36 @@
+name: Repository Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate:
+    name: Validate pipeline examples
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Jenkinsfile structure
+        run: |
+          set -euo pipefail
+
+          for file in pipelines/*/Jenkinsfile; do
+            test -f "$file"
+            grep -q "^pipeline {" "$file"
+            grep -q "agent " "$file"
+            grep -q "stages {" "$file"
+          done
+
+      - name: Check core documentation
+        run: |
+          set -euo pipefail
+
+          test -f README.md
+          test -f docs/jenkins-fundamentals.md
+          test -f docs/pipeline-review-checklist.md
+          test -f docs/troubleshooting.md

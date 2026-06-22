@@ -31,6 +31,7 @@ pipeline.
 Current sections:
 
 - [Jenkins Fundamentals](docs/jenkins-fundamentals.md);
+- [CI Workflow](docs/ci.md);
 - [Jenkins Agent Strategy](docs/agent-strategy.md);
 - [Artifact Strategy](docs/artifact-strategy.md);
 - [Java Maven Pipeline](docs/java-maven-pipeline.md);
