@@ -48,6 +48,11 @@ pipeline {
             steps {
                 sh './mvnw -B --no-transfer-progress package -DskipTests'
             }
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                }
+            }
         }
     }
 
