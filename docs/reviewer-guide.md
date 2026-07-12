@@ -10,6 +10,7 @@ pipeline engineering signals in this repository.
 3. `docs/quality-gates.md` for quality criteria.
 4. `docs/credentials-and-secrets.md` for security posture.
 5. `pipelines/` for runnable Jenkinsfile examples.
+6. Docker and quality-gate pipelines for artifact handling and runtime bounds.
 
 ## Strong Signals
 
@@ -17,9 +18,12 @@ pipeline engineering signals in this repository.
 - Quality gates, artifacts, credentials, and rollback are treated explicitly.
 - Examples separate build, test, packaging, and deployment responsibilities.
 - Review checklists make operational risks visible.
+- Pipelines include guardrails such as timeouts, artifact archiving, and
+  explicit checkout behavior.
 
 ## Interview Talking Points
 
 - Explain why CI/CD design is also software architecture.
 - Discuss how credentials should move through a pipeline safely.
 - Show where quality gates prevent bad deployments.
+- Explain why pipeline timeouts protect shared build agents.
