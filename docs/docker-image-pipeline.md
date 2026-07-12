@@ -9,6 +9,9 @@ The goal is to separate application packaging from container image delivery.
 A successful run proves that Jenkins can create an immutable image candidate
 from the source code.
 
+The pipeline also uses a global timeout and explicit checkout so stalled Docker
+builds do not consume agents indefinitely.
+
 ## Stages
 
 ### Checkout
