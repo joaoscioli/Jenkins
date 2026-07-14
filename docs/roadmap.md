@@ -36,3 +36,10 @@ professional CI/CD lab.
 - Add examples for broken tests and missing credentials. Done.
 - Add examples for failed Docker builds. Partially done.
 - Explain how to read logs and isolate failures. Done.
+
+## Phase 6: Interview-Ready Pipeline Reviews
+
+- Add a short before/after review example for a risky Jenkinsfile.
+- Document how to spot missing timeouts, artifact retention, and credential
+  exposure.
+- Add a checklist for approving production deployment pipelines.
