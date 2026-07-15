@@ -66,6 +66,12 @@ This is a supporting repository in my backend portfolio. It complements the
 main Java and Spring Boot projects by showing delivery awareness, CI/CD
 discipline, and the ability to explain engineering workflows clearly.
 
+## Interview Checkpoint
+
+A reviewer should compare the Java Maven, Docker image, and Spring Boot quality
+gate pipelines. They show build separation, test reports, artifact handling,
+timeouts, credentials, and release discipline.
+
 ## Roadmap
 
 - [x] Add a first declarative Jenkins pipeline for a Maven project.
