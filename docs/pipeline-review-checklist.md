@@ -40,3 +40,10 @@ Use this checklist before treating a Jenkins pipeline as portfolio-ready.
 - CI should fail before release when quality gates fail.
 - Secrets and production approvals are part of engineering discipline.
 - Traceability connects code, build, artifact, and deployment.
+
+## Questions This Lab Can Answer
+
+- Where should a pipeline fail before deployment is possible?
+- How do timeouts protect shared build agents?
+- What artifacts should be retained for debugging?
+- How should credentials be used without leaking into source control or logs?
