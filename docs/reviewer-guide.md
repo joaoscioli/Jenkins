@@ -27,3 +27,8 @@ pipeline engineering signals in this repository.
 - Discuss how credentials should move through a pipeline safely.
 - Show where quality gates prevent bad deployments.
 - Explain why pipeline timeouts protect shared build agents.
+
+## Next Practical Step
+
+Add a reviewed Jenkinsfile example that starts risky and is improved with
+timeouts, artifact retention, credentials handling, and deployment approval.
