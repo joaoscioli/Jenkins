@@ -72,6 +72,12 @@ A reviewer should compare the Java Maven, Docker image, and Spring Boot quality
 gate pipelines. They show build separation, test reports, artifact handling,
 timeouts, credentials, and release discipline.
 
+## Portfolio Proof
+
+This repository proves delivery awareness. It shows that backend engineering
+does not stop at code: build feedback, artifacts, credentials, and release
+control are part of the system.
+
 ## Roadmap
 
 - [x] Add a first declarative Jenkins pipeline for a Maven project.
