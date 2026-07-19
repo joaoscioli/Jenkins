@@ -19,6 +19,7 @@ engineering practices:
 - automated tests;
 - pipeline stages;
 - Docker-based delivery;
+- artifact retention and runtime bounds;
 - environment variables and credentials;
 - release discipline;
 - troubleshooting failed builds.
