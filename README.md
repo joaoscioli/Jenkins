@@ -49,7 +49,8 @@ Current sections:
 - [Rollback Strategy](docs/rollback-strategy.md);
 - [Spring Boot Delivery Notes](docs/spring-boot-delivery.md);
 - [Troubleshooting Guide](docs/troubleshooting.md);
-- [Repository Roadmap](docs/roadmap.md).
+- [Repository Roadmap](docs/roadmap.md);
+- [Changelog](CHANGELOG.md).
 
 Pipeline examples:
 
