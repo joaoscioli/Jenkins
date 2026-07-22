@@ -2,6 +2,9 @@
 
 This project follows small, reviewable increments. Dates use `YYYY-MM-DD`.
 
+Review cadence: each portfolio update should improve pipeline safety,
+traceability, troubleshooting, or release confidence.
+
 ## Unreleased
 
 - Planned: before-and-after Jenkinsfile review example.
