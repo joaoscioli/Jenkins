@@ -5,6 +5,12 @@ This project follows small, reviewable increments. Dates use `YYYY-MM-DD`.
 Review cadence: each portfolio update should improve pipeline safety,
 traceability, troubleshooting, or release confidence.
 
+## How To Discuss This History
+
+Use this changelog to show delivery maturity. The strongest narrative is moving
+from running commands to designing pipelines with artifacts, credentials,
+timeouts, and review gates.
+
 ## Unreleased
 
 - Planned: before-and-after Jenkinsfile review example.
