@@ -11,6 +11,11 @@ Use this changelog to show delivery maturity. The strongest narrative is moving
 from running commands to designing pipelines with artifacts, credentials,
 timeouts, and review gates.
 
+## Review Readiness
+
+Ready for interview review when each pipeline example explains what it protects
+and how a failed stage helps debugging.
+
 ## Unreleased
 
 - Planned: before-and-after Jenkinsfile review example.
