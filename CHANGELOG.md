@@ -16,6 +16,9 @@ timeouts, and review gates.
 Ready for interview review when each pipeline example explains what it protects
 and how a failed stage helps debugging.
 
+Current public signal: CI/CD examples that connect build stages, artifacts,
+credentials, timeouts, and release confidence.
+
 ## Unreleased
 
 - Planned: before-and-after Jenkinsfile review example.
