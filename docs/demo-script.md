@@ -1,0 +1,17 @@
+# Demo Script
+
+Use this short script to present the repository in a technical interview.
+
+## 3-Minute Walkthrough
+
+1. Start with the goal: Jenkins pipelines for Java and Spring Boot delivery.
+2. Compare the Maven, Docker image, and quality-gate pipelines.
+3. Explain how timeouts, artifacts, credentials, and stage separation reduce
+   operational risk.
+4. Close with the next step: a before-and-after pipeline review example.
+
+## What To Emphasize
+
+- CI/CD design is part of software architecture.
+- Pipelines should fail early and explain why.
+- Artifacts and logs are review tools, not only build outputs.
