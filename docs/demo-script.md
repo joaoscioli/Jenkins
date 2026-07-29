@@ -15,3 +15,9 @@ Use this short script to present the repository in a technical interview.
 - CI/CD design is part of software architecture.
 - Pipelines should fail early and explain why.
 - Artifacts and logs are review tools, not only build outputs.
+
+## Before The Interview
+
+- Open one Jenkinsfile and explain each stage.
+- Be ready to discuss where secrets should live.
+- Prepare one example of a pipeline failure and how to debug it.
