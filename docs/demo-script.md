@@ -21,3 +21,9 @@ Use this short script to present the repository in a technical interview.
 - Open one Jenkinsfile and explain each stage.
 - Be ready to discuss where secrets should live.
 - Prepare one example of a pipeline failure and how to debug it.
+
+## Avoid Saying
+
+- "The pipeline deploys automatically." Instead, explain where approval is
+  needed.
+- "CI just runs tests." Instead, explain traceability from code to artifact.
