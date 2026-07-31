@@ -33,6 +33,7 @@ Current sections:
 
 - [Jenkins Fundamentals](docs/jenkins-fundamentals.md);
 - [Demo Script](docs/demo-script.md);
+- [Interview Questions](docs/interview-questions.md);
 - [CI Workflow](docs/ci.md);
 - [Jenkins Agent Strategy](docs/agent-strategy.md);
 - [Artifact Strategy](docs/artifact-strategy.md);
