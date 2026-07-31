@@ -22,6 +22,13 @@ Use this short script to present the repository in a technical interview.
 - Be ready to discuss where secrets should live.
 - Prepare one example of a pipeline failure and how to debug it.
 
+## Evidence To Open
+
+- `pipelines/java-maven/Jenkinsfile`
+- `pipelines/docker-image/Jenkinsfile`
+- `pipelines/spring-boot-quality-gates/Jenkinsfile`
+- `docs/pipeline-review-playbook.md`
+
 ## Avoid Saying
 
 - "The pipeline deploys automatically." Instead, explain where approval is
