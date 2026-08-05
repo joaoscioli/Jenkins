@@ -34,6 +34,7 @@ Current sections:
 - [Jenkins Fundamentals](docs/jenkins-fundamentals.md);
 - [Reviewer Scorecard](docs/reviewer-scorecard.md);
 - [Technical Depth Map](docs/technical-depth-map.md);
+- [Portfolio Positioning](docs/portfolio-positioning.md);
 - [Demo Script](docs/demo-script.md);
 - [Interview Questions](docs/interview-questions.md);
 - [CI Workflow](docs/ci.md);
