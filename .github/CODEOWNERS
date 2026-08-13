@@ -1,2 +1,10 @@
-# Default repository owner
+# Repository owner
 * @joaoscioli
+
+# Pipeline examples
+/pipelines/ @joaoscioli
+
+# Delivery documentation and GitHub workflow
+/docs/ @joaoscioli
+/.github/ @joaoscioli
+README.md @joaoscioli
