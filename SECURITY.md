@@ -1,25 +1,27 @@
 # Security Policy
 
-This repository is a CI/CD lab. Security review is important because pipeline
-examples often touch credentials, artifacts, environments, and deployment flow.
+This repository contains CI/CD examples, so security concerns are especially
+important around credentials, logs, artifacts, and deployment behavior.
 
 ## Supported Scope
 
-Security review focuses on:
+Security feedback is welcome for:
 
-- credentials handling in Jenkinsfiles;
-- unsafe shell commands in pipeline examples;
-- artifact publishing and retention risks;
-- environment variable exposure;
-- deployment and rollback guidance.
+- unsafe Jenkinsfile examples;
+- credentials or secret handling issues;
+- artifact or log exposure risks;
+- dependency or build vulnerabilities;
+- misleading release or deployment guidance.
 
-## Reporting A Security Concern
+## Reporting
 
-Open a concise issue describing the affected pipeline or document. Do not post
-real credentials, tokens, internal URLs, or private deployment details.
+Please do not open a public issue with sensitive details.
 
-## Development Practices
+Send a private report to `joaoscioli@outlook.com` with the affected file, the
+risk, and a suggested mitigation when possible.
 
-- Use Jenkins credentials binding for secrets.
-- Avoid printing sensitive values in logs.
-- Keep deployment examples explicit about safety gates.
+## Security Expectations
+
+- Secrets must live in Jenkins credentials or a secret manager, not in code.
+- Logs should not expose tokens, passwords, or private environment values.
+- Deployment examples should make approval and rollback expectations clear.
