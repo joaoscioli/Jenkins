@@ -18,6 +18,11 @@ clarity, safety, repeatability, or documentation.
 - A rollback or deployment note is missing an important assumption.
 - A CI example should document artifacts, reports, or quality gates.
 
+## Review Questions
+
+For portfolio or interview review, include the Jenkinsfile, stage, or document
+being discussed and the delivery risk you want to evaluate.
+
 ## Out Of Scope
 
 - Production Jenkins administration support.
