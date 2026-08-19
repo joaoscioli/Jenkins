@@ -91,6 +91,12 @@ This repository proves delivery awareness. It shows that backend engineering
 does not stop at code: build feedback, artifacts, credentials, and release
 control are part of the system.
 
+## Fast Review Path
+
+1. Read the [30-Second Pitch](docs/30-second-pitch.md) to understand the repository signal.
+2. Open the [Interview Case Study](docs/interview-case-study.md) to follow the delivery story.
+3. Compare the three Jenkinsfiles to validate pipeline separation and release discipline.
+
 ## Roadmap
 
 - [x] Add a first declarative Jenkins pipeline for a Maven project.
