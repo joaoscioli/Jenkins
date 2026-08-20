@@ -24,6 +24,15 @@ credentials, timeouts, and release confidence.
 - Planned: before-and-after Jenkinsfile review example.
 - Planned: production deployment approval checklist.
 
+## 2026-08 Interview Readiness
+
+- Added fast review path, interview case study, and stronger CI/CD talking
+  points for technical interviews.
+- Refined GitHub hygiene with issue, pull request, CODEOWNERS, security, support,
+  contributing, and Dependabot configuration updates.
+- Clarified how to present pipelines as delivery-risk reduction, not only build
+  automation.
+
 ## 2026-07 Portfolio Hardening
 
 - Added runtime bounds to Jenkins pipeline examples.
