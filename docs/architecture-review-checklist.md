@@ -1,26 +1,25 @@
 # Architecture Review Checklist
 
-Use this checklist to review the project as a delivery architecture exercise.
+Use this checklist to review the project's delivery architecture. Support each item with code, tests, configuration, or documentation.
 
 ## Pipeline Boundary
 
-- Build, test, package, scan, and deploy responsibilities are separated.
-- Credentials are referenced through safe pipeline mechanisms.
-- Artifacts are traceable from commit to release candidate.
+- [ ] Build, test, package, scan, and deploy stages have distinct responsibilities.
+- [ ] Pipelines obtain credentials through approved secret mechanisms.
+- [ ] Artifacts are traceable from commit to release candidate.
 
 ## Delivery Safety
 
-- Quality gates fail early and provide useful feedback.
-- Production deployment includes approval, rollback, and ownership thinking.
-- Environment-specific behavior is documented instead of hidden in scripts.
+- [ ] Quality gates fail early with actionable feedback.
+- [ ] Production deployment defines approval, ownership, and rollback.
+- [ ] Environment-specific behavior is explicit and reviewable.
 
-## Operational Review
+## Operational Readiness
 
-- Pipeline duration and failure points are easy to inspect.
-- Release steps can be repeated by another engineer.
-- Security checks are part of the delivery path.
+- [ ] Logs and metrics expose pipeline duration and failure points.
+- [ ] Another engineer can repeat the release from documented steps.
+- [ ] Security checks run in the delivery path and block unsafe releases.
 
-## Interview Defense
+## Architecture Defense
 
-Be ready to explain why CI/CD design is backend engineering work, not only an
-operations detail.
+Be ready to explain how the pipeline supports safe delivery, the evidence that it works, and the next production risk to address.
