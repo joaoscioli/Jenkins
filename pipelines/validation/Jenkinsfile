@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        timeout(time: 5, unit: 'MINUTES')
+        skipDefaultCheckout()
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Validate Declarative Pipelines') {
+            steps {
+                script {
+                    def pipelineFiles = [
+                        'pipelines/java-maven/Jenkinsfile',
+                        'pipelines/docker-image/Jenkinsfile',
+                        'pipelines/spring-boot-quality-gates/Jenkinsfile'
+                    ]
+                    def invalidFiles = []
+                    for (def pipelineFile : pipelineFiles) {
+                        echo "Validating ${pipelineFile}"
+                        if (!validateDeclarativePipeline(path: pipelineFile)) {
+                            invalidFiles.add(pipelineFile)
+                        }
+                    }
+                    if (!invalidFiles.isEmpty()) {
+                        error "Invalid Declarative Pipelines: ${invalidFiles.join(', ')}"
+                    }
+                }
+            }
+        }
+    }
+}

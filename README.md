@@ -108,6 +108,21 @@ Pipeline examples:
 - [Docker Image Pipeline](pipelines/docker-image/Jenkinsfile);
 - [Spring Boot Quality Gates Pipeline](pipelines/spring-boot-quality-gates/Jenkinsfile).
 
+## Run Pipeline Validation
+
+Create a Jenkins **Pipeline from SCM** job pointing at this repository and set
+the script path to `pipelines/validation/Jenkinsfile`. It checks all three
+delivery examples with Jenkins' native
+[`validateDeclarativePipeline`](https://www.jenkins.io/doc/pipeline/steps/pipeline-model-definition/#validatedeclarativepipeline-validate-a-file-containing-a-declarative-pipeline)
+step and fails the job if any example is invalid. Each file is checked so the
+logs show all validation failures in one run.
+
+Requires the Pipeline: Declarative plugin and an agent with Git access. The
+validation job has a five-minute timeout and does not run Maven, Docker, or
+deployment stages. This checks Declarative syntax and model structure;
+tool installations, credentials, and runtime behavior still need a delivery
+pipeline run on the intended Jenkins instance.
+
 Planned sections:
 
 - production deployment examples.
