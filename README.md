@@ -104,6 +104,11 @@ Current sections:
 
 Pipeline examples:
 
+The Java Maven example performs one explicit checkout and limits execution to
+20 minutes after agent allocation. A stalled build is aborted instead of
+occupying the agent indefinitely. These controls use Jenkins'
+[Declarative options](https://www.jenkins.io/doc/book/pipeline/syntax/#available-options).
+
 - [Java Maven Pipeline](pipelines/java-maven/Jenkinsfile);
 - [Docker Image Pipeline](pipelines/docker-image/Jenkinsfile);
 - [Spring Boot Quality Gates Pipeline](pipelines/spring-boot-quality-gates/Jenkinsfile).
