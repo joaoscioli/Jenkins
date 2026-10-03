@@ -10,6 +10,11 @@ the Jenkins pipeline examples.
   `pipeline`, `agent`, and `stages`.
 - Core documentation files remain present.
 
+The check job has a five-minute timeout and grants `GITHUB_TOKEN` only
+`contents: read`. Repository validation needs checkout access without write
+permissions. See the [GitHub Actions workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
+for token permissions and job runtime limits.
+
 ## Why This Matters
 
 GitHub Actions does not replace Jenkins in this repository. The goal is to use
