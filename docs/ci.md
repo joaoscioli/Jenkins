@@ -8,7 +8,16 @@ the Jenkins pipeline examples.
 - Every pipeline example has a `Jenkinsfile`.
 - Each `Jenkinsfile` keeps the basic declarative pipeline structure:
   `pipeline`, `agent`, and `stages`.
+- Each pipeline directory contains a Jenkinsfile, including newly added directories.
+- Each example declares a timeout, skips implicit checkout, prevents concurrent
+  builds and performs an explicit `checkout scm`.
 - Core documentation files remain present.
+
+Run the same checks locally with `bash scripts/check-repository.sh` (Git Bash
+on Windows). The script resolves paths from its own location. Failures identify
+both the missing guardrail and affected file. These are textual checks; they
+cannot prove Groovy syntax or Jenkins plugin compatibility. The validation
+Jenkinsfile provides the separate controller-based declarative validation.
 
 The check job has a five-minute timeout and grants `GITHUB_TOKEN` only
 `contents: read`. Repository validation needs checkout access without write
