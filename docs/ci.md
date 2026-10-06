@@ -19,6 +19,13 @@ both the missing guardrail and affected file. These are textual checks; they
 cannot prove Groovy syntax or Jenkins plugin compatibility. The validation
 Jenkinsfile provides the separate controller-based declarative validation.
 
+The validation job runs the same repository guardrails after checkout and
+before controller validation. Its agent needs a Unix shell and Bash. The
+controller validates all four examples, including the validation Jenkinsfile
+itself; validating that file parses its model without starting another build.
+Configure the job to use `pipelines/validation/Jenkinsfile` from SCM. A failed
+guardrail stops the job before declarative validation.
+
 The check job has a five-minute timeout and grants `GITHUB_TOKEN` only
 `contents: read`. Repository validation needs checkout access without write
 permissions. See the [GitHub Actions workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)

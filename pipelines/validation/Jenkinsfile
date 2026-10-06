@@ -16,13 +16,20 @@ pipeline {
             }
         }
 
+        stage('Check Repository Guardrails') {
+            steps {
+                sh 'bash scripts/check-repository.sh'
+            }
+        }
+
         stage('Validate Declarative Pipelines') {
             steps {
                 script {
                     def pipelineFiles = [
                         'pipelines/java-maven/Jenkinsfile',
                         'pipelines/docker-image/Jenkinsfile',
-                        'pipelines/spring-boot-quality-gates/Jenkinsfile'
+                        'pipelines/spring-boot-quality-gates/Jenkinsfile',
+                        'pipelines/validation/Jenkinsfile'
                     ]
                     def invalidFiles = []
                     for (def pipelineFile : pipelineFiles) {
