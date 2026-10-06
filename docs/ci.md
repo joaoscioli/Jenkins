@@ -26,6 +26,12 @@ itself; validating that file parses its model without starting another build.
 Configure the job to use `pipelines/validation/Jenkinsfile` from SCM. A failed
 guardrail stops the job before declarative validation.
 
+Run `python3 scripts/test-check-repository.py` to exercise isolated fixtures
+for every missing guardrail, each required document, and a new pipeline without
+a Jenkinsfile. The suite also checks successful execution from another working
+directory. It requires Python 3 and Bash on PATH (use `python` from Git Bash on
+Windows) and runs in GitHub Actions without a Jenkins controller.
+
 The check job has a five-minute timeout and grants `GITHUB_TOKEN` only
 `contents: read`. Repository validation needs checkout access without write
 permissions. See the [GitHub Actions workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)

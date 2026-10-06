@@ -21,3 +21,6 @@ jobs:
 
       - name: Check repository and pipeline guardrails
         run: bash scripts/check-repository.sh
+
+      - name: Test guardrail failure diagnostics
+        run: python3 scripts/test-check-repository.py
