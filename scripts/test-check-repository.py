@@ -20,16 +20,21 @@ DOCUMENTS = (
 
 
 class RepositoryGuardrailTests(unittest.TestCase):
-    def check_fixture(self, missing_guardrail=None, missing_document=None, missing_pipeline=False):
+    def check_fixture(self, missing_guardrail=None, missing_document=None, missing_pipeline=False,
+                      empty_pipelines=False, pipeline_note=False):
         with tempfile.TemporaryDirectory(prefix="jenkins-guardrails-") as temporary:
             root = Path(temporary)
             (root / "scripts").mkdir()
             shutil.copyfile(SCRIPT, root / "scripts/check-repository.sh")
             pipeline = root / "pipelines/example/Jenkinsfile"
-            pipeline.parent.mkdir(parents=True)
-            pipeline.write_text("\n".join(
-                value for value in GUARDRAILS if value != missing_guardrail
-            ), encoding="utf-8")
+            (root / "pipelines").mkdir()
+            if not empty_pipelines:
+                pipeline.parent.mkdir(parents=True)
+                pipeline.write_text("\n".join(
+                    value for value in GUARDRAILS if value != missing_guardrail
+                ), encoding="utf-8")
+            if pipeline_note:
+                (root / "pipelines/README.md").write_text("Pipeline index\n", encoding="utf-8")
             for document in DOCUMENTS:
                 if document != missing_document:
                     path = root / document
@@ -71,6 +76,17 @@ class RepositoryGuardrailTests(unittest.TestCase):
         result = self.check_fixture(missing_pipeline=True)
         self.assertEqual(1, result.returncode, result.stderr)
         self.assertIn("Missing Jenkinsfile: pipelines/new-example/Jenkinsfile", result.stderr)
+
+    def test_regular_files_in_pipeline_directory_are_not_examples(self):
+        result = self.check_fixture(pipeline_note=True)
+        self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_empty_pipeline_directory_fails_with_actionable_message(self):
+        for pipeline_note in (False, True):
+            with self.subTest(pipeline_note=pipeline_note):
+                result = self.check_fixture(empty_pipelines=True, pipeline_note=pipeline_note)
+                self.assertEqual(1, result.returncode, result.stderr)
+                self.assertIn("No pipeline examples found under pipelines/.", result.stderr)
 
 
 if __name__ == "__main__":
