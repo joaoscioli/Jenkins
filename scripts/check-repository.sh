@@ -5,6 +5,13 @@ set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 shopt -s nullglob
+for script in scripts/*.sh; do
+  if ! bash -n "$script"; then
+    echo "Invalid Bash syntax: $script" >&2
+    exit 1
+  fi
+done
+
 pipeline_count=0
 for directory in pipelines/*; do
   [[ -d "$directory" ]] || continue

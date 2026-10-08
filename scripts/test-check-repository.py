@@ -21,11 +21,13 @@ DOCUMENTS = (
 
 class RepositoryGuardrailTests(unittest.TestCase):
     def check_fixture(self, missing_guardrail=None, missing_document=None, missing_pipeline=False,
-                      empty_pipelines=False, pipeline_note=False):
+                      empty_pipelines=False, pipeline_note=False, helper_script=None):
         with tempfile.TemporaryDirectory(prefix="jenkins-guardrails-") as temporary:
             root = Path(temporary)
             (root / "scripts").mkdir()
             shutil.copyfile(SCRIPT, root / "scripts/check-repository.sh")
+            if helper_script is not None:
+                (root / "scripts/helper.sh").write_text(helper_script, encoding="utf-8")
             pipeline = root / "pipelines/example/Jenkinsfile"
             (root / "pipelines").mkdir()
             if not empty_pipelines:
@@ -54,6 +56,15 @@ class RepositoryGuardrailTests(unittest.TestCase):
         result = self.check_fixture()
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("guardrails passed", result.stdout)
+
+    def test_invalid_helper_shell_syntax_fails_with_its_path(self):
+        result = self.check_fixture(helper_script="if true; then\necho incomplete\n")
+        self.assertEqual(1, result.returncode, result.stderr)
+        self.assertIn("Invalid Bash syntax: scripts/helper.sh", result.stderr)
+
+    def test_valid_helper_is_parsed_without_executing_it(self):
+        result = self.check_fixture(helper_script="#!/usr/bin/env bash\nexit 42\n")
+        self.assertEqual(0, result.returncode, result.stderr)
 
     def test_every_missing_guardrail_fails_with_the_file_and_rule(self):
         for guardrail in GUARDRAILS:
