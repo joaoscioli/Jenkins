@@ -40,6 +40,12 @@ for token permissions and job runtime limits.
 
 ## Why This Matters
 
+The Spring Boot quality-gates example publishes Failsafe integration-test reports
+in the integration stage's `post { always { ... } }`, including failed Maven runs.
+Its target application's `integration-tests` profile must run Maven Failsafe and
+produce `target/failsafe-reports/TEST-*.xml`; absent reports fail the gate rather
+than silently accepting a profile that did not execute integration tests.
+
 GitHub Actions does not replace Jenkins in this repository. The goal is to use
 it as a fast repository quality gate while Jenkins remains the subject of the
 examples.
