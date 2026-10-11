@@ -21,7 +21,8 @@ DOCUMENTS = (
 
 class RepositoryGuardrailTests(unittest.TestCase):
     def check_fixture(self, missing_guardrail=None, missing_document=None, missing_pipeline=False,
-                      empty_pipelines=False, pipeline_note=False, helper_script=None):
+                      empty_pipelines=False, pipeline_note=False, helper_script=None,
+                      commented_guardrail=None):
         with tempfile.TemporaryDirectory(prefix="jenkins-guardrails-") as temporary:
             root = Path(temporary)
             (root / "scripts").mkdir()
@@ -33,7 +34,8 @@ class RepositoryGuardrailTests(unittest.TestCase):
             if not empty_pipelines:
                 pipeline.parent.mkdir(parents=True)
                 pipeline.write_text("\n".join(
-                    value for value in GUARDRAILS if value != missing_guardrail
+                    "    // " + value if value == commented_guardrail else value
+                    for value in GUARDRAILS if value != missing_guardrail
                 ), encoding="utf-8")
             if pipeline_note:
                 (root / "pipelines/README.md").write_text("Pipeline index\n", encoding="utf-8")
@@ -82,6 +84,14 @@ class RepositoryGuardrailTests(unittest.TestCase):
                 result = self.check_fixture(missing_document=document)
                 self.assertEqual(1, result.returncode, result.stderr)
                 self.assertIn("Missing core documentation: " + document, result.stderr)
+
+    def test_full_line_comments_cannot_satisfy_any_required_guardrail(self):
+        for guardrail in GUARDRAILS:
+            with self.subTest(guardrail=guardrail):
+                result = self.check_fixture(commented_guardrail=guardrail)
+                self.assertEqual(1, result.returncode, result.stderr)
+                self.assertIn("Missing required structure or guardrail", result.stderr)
+                self.assertIn("pipelines/example/Jenkinsfile", result.stderr)
 
     def test_new_pipeline_directory_requires_a_jenkinsfile(self):
         result = self.check_fixture(missing_pipeline=True)

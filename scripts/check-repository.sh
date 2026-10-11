@@ -21,9 +21,11 @@ for directory in pipelines/*; do
     echo "Missing Jenkinsfile: $file" >&2
     exit 1
   fi
+  # A disabled guardrail in a full-line Groovy comment must not satisfy the gate.
+  active_lines=$(sed '/^[[:space:]]*\/\//d' "$file")
   for pattern in 'pipeline {' 'agent ' 'stages {' 'timeout(' \
                  'skipDefaultCheckout(' 'disableConcurrentBuilds(' 'checkout scm'; do
-    if ! grep -Fq "$pattern" "$file"; then
+    if ! grep -Fq "$pattern" <<< "$active_lines"; then
       echo "Missing required structure or guardrail '$pattern': $file" >&2
       exit 1
     fi

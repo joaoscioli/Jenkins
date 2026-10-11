@@ -16,7 +16,9 @@ the Jenkins pipeline examples.
 
 Run the same checks locally with `bash scripts/check-repository.sh` (Git Bash
 on Windows). The script resolves paths from its own location. Failures identify
-both the missing guardrail and affected file. These are textual checks; they
+both the missing guardrail and affected file. Full-line `//` comments (including
+indented comments) are ignored, so commenting out a guardrail fails the gate.
+These are textual checks; block comments and string literals are not parsed. They
 cannot prove Groovy syntax or Jenkins plugin compatibility. The validation
 Jenkinsfile provides the separate controller-based declarative validation.
 
