@@ -30,6 +30,10 @@ for directory in pipelines/*; do
       exit 1
     fi
   done
+  if ! grep -Eq 'skipDefaultCheckout\([[:space:]]*(true[[:space:]]*)?\)' <<< "$active_lines"; then
+    echo "Implicit checkout must be disabled: $file" >&2
+    exit 1
+  fi
 done
 
 if [[ "$pipeline_count" -eq 0 ]]; then

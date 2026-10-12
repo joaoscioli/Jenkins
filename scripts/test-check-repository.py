@@ -22,7 +22,7 @@ DOCUMENTS = (
 class RepositoryGuardrailTests(unittest.TestCase):
     def check_fixture(self, missing_guardrail=None, missing_document=None, missing_pipeline=False,
                       empty_pipelines=False, pipeline_note=False, helper_script=None,
-                      commented_guardrail=None):
+                      commented_guardrail=None, checkout_option="skipDefaultCheckout(true)"):
         with tempfile.TemporaryDirectory(prefix="jenkins-guardrails-") as temporary:
             root = Path(temporary)
             (root / "scripts").mkdir()
@@ -34,7 +34,8 @@ class RepositoryGuardrailTests(unittest.TestCase):
             if not empty_pipelines:
                 pipeline.parent.mkdir(parents=True)
                 pipeline.write_text("\n".join(
-                    "    // " + value if value == commented_guardrail else value
+                    "    // " + value if value == commented_guardrail else
+                    checkout_option if value == "skipDefaultCheckout(true)" else value
                     for value in GUARDRAILS if value != missing_guardrail
                 ), encoding="utf-8")
             if pipeline_note:
@@ -58,6 +59,17 @@ class RepositoryGuardrailTests(unittest.TestCase):
         result = self.check_fixture()
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("guardrails passed", result.stdout)
+
+    def test_disabled_checkout_option_fails_even_when_its_name_is_present(self):
+        result = self.check_fixture(checkout_option="skipDefaultCheckout(false)")
+        self.assertEqual(1, result.returncode, result.stderr)
+        self.assertIn("Implicit checkout must be disabled: pipelines/example/Jenkinsfile", result.stderr)
+
+    def test_enabled_checkout_option_accepts_default_and_explicit_true(self):
+        for option in ("skipDefaultCheckout()", "skipDefaultCheckout( true )"):
+            with self.subTest(option=option):
+                result = self.check_fixture(checkout_option=option)
+                self.assertEqual(0, result.returncode, result.stderr)
 
     def test_invalid_helper_shell_syntax_fails_with_its_path(self):
         result = self.check_fixture(helper_script="if true; then\necho incomplete\n")

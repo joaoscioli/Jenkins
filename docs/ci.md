@@ -12,6 +12,7 @@ the Jenkins pipeline examples.
 - Each example declares a timeout, skips implicit checkout, prevents concurrent
   builds and performs an explicit `checkout scm`.
 - Core documentation files remain present.
+- `skipDefaultCheckout` uses `true` or its empty default; `false` fails the gate.
 - Every `scripts/*.sh` file passes `bash -n` syntax validation without execution.
 
 Run the same checks locally with `bash scripts/check-repository.sh` (Git Bash
