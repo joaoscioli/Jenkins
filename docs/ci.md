@@ -43,6 +43,12 @@ for token permissions and job runtime limits.
 
 ## Why This Matters
 
+The Docker image example runs Maven `verify` before building or pushing an image.
+The application stage always publishes Surefire reports, including when tests
+fail, and missing reports fail the gate. The target application must contain
+unit tests producing `target/surefire-reports/TEST-*.xml`. A failing application
+stage prevents the later image stages from running.
+
 The Spring Boot quality-gates example publishes Failsafe integration-test reports
 in the integration stage's `post { always { ... } }`, including failed Maven runs.
 Its target application's `integration-tests` profile must run Maven Failsafe and

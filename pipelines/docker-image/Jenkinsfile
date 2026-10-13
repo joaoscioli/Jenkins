@@ -32,7 +32,12 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                sh './mvnw -B --no-transfer-progress package -DskipTests'
+                sh './mvnw -B --no-transfer-progress verify'
+            }
+            post {
+                always {
+                    junit testResults: 'target/surefire-reports/TEST-*.xml', allowEmptyResults: false
+                }
             }
         }
 
