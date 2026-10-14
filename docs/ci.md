@@ -49,6 +49,10 @@ fail, and missing reports fail the gate. The target application must contain
 unit tests producing `target/surefire-reports/TEST-*.xml`. A failing application
 stage prevents the later image stages from running.
 
+The registry shell block uses `set -eu` so a failed login stops before `docker push`.
+The Python suite executes that actual block with a shell function standing in for
+Docker, checking failed and successful login paths without a registry or daemon.
+
 The Spring Boot quality-gates example publishes Failsafe integration-test reports
 in the integration stage's `post { always { ... } }`, including failed Maven runs.
 Its target application's `integration-tests` profile must run Maven Failsafe and

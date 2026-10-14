@@ -1,6 +1,8 @@
 """Exercise the shell guardrails against isolated repositories, without Jenkins."""
 
 import shutil
+import os
+import re
 import subprocess
 import tempfile
 import unittest
@@ -120,6 +122,46 @@ class RepositoryGuardrailTests(unittest.TestCase):
                 result = self.check_fixture(empty_pipelines=True, pipeline_note=pipeline_note)
                 self.assertEqual(1, result.returncode, result.stderr)
                 self.assertIn("No pipeline examples found under pipelines/.", result.stderr)
+
+
+class DockerPushShellTests(unittest.TestCase):
+    def run_push(self, login_status):
+        pipeline = SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile"
+        source = pipeline.read_text(encoding="utf-8")
+        blocks = re.findall(r"sh '''(.*?)'''", source, re.DOTALL)
+        push_blocks = [block for block in blocks if "docker login" in block]
+        self.assertEqual(1, len(push_blocks), "Expected one registry login shell block")
+        with tempfile.TemporaryDirectory(prefix="jenkins-docker-push-") as temporary:
+            root = Path(temporary)
+            # Shell function shadows Docker: no registry, credentials or daemon needed.
+            harness = root / "push.sh"
+            harness.write_text('''docker() {
+  printf '%s\\n' "$1" >> calls.txt
+  if [ "$1" = login ]; then
+    cat >/dev/null
+    return "$LOGIN_STATUS"
+  fi
+  return 0
+}
+''' + push_blocks[0], encoding="utf-8")
+            environment = dict(os.environ, LOGIN_STATUS=str(login_status),
+                               REGISTRY_PASSWORD="fixture-password", REGISTRY_USERNAME="fixture-user",
+                               IMAGE_NAME="fixture/image", IMAGE_TAG="42")
+            result = subprocess.run([BASH, harness.as_posix()], cwd=root, env=environment,
+                                    capture_output=True, text=True, timeout=10)
+            calls = (root / "calls.txt").read_text(encoding="utf-8").splitlines()
+            self.assertNotIn("fixture-password", result.stdout + result.stderr)
+            return result, calls
+
+    def test_failed_login_stops_before_push(self):
+        result, calls = self.run_push(7)
+        self.assertEqual(7, result.returncode, result.stderr)
+        self.assertEqual(["login"], calls)
+
+    def test_successful_login_allows_one_push(self):
+        result, calls = self.run_push(0)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(["login", "push"], calls)
 
 
 if __name__ == "__main__":
