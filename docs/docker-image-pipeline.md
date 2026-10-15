@@ -69,6 +69,11 @@ Why it matters:
 - accidental pushes are avoided;
 - credentials stay managed by Jenkins.
 
+The login shell uses `printf '%s'` to forward password bytes literally through stdin,
+including leading dashes, backslashes and percent signs, without adding a newline.
+The shell tests capture stdin using a fake Docker command and check
+these values without printing credentials or contacting a registry.
+
 ## Jenkins Requirements
 
 This example expects Jenkins to have:

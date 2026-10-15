@@ -125,7 +125,7 @@ class RepositoryGuardrailTests(unittest.TestCase):
 
 
 class DockerPushShellTests(unittest.TestCase):
-    def run_push(self, login_status):
+    def run_push(self, login_status, password="fixture-password"):
         pipeline = SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile"
         source = pipeline.read_text(encoding="utf-8")
         blocks = re.findall(r"sh '''(.*?)'''", source, re.DOTALL)
@@ -138,19 +138,20 @@ class DockerPushShellTests(unittest.TestCase):
             harness.write_text('''docker() {
   printf '%s\\n' "$1" >> calls.txt
   if [ "$1" = login ]; then
-    cat >/dev/null
+    cat >password.txt
     return "$LOGIN_STATUS"
   fi
   return 0
 }
 ''' + push_blocks[0], encoding="utf-8")
             environment = dict(os.environ, LOGIN_STATUS=str(login_status),
-                               REGISTRY_PASSWORD="fixture-password", REGISTRY_USERNAME="fixture-user",
+                               REGISTRY_PASSWORD=password, REGISTRY_USERNAME="fixture-user",
                                IMAGE_NAME="fixture/image", IMAGE_TAG="42")
             result = subprocess.run([BASH, harness.as_posix()], cwd=root, env=environment,
                                     capture_output=True, text=True, timeout=10)
             calls = (root / "calls.txt").read_text(encoding="utf-8").splitlines()
-            self.assertNotIn("fixture-password", result.stdout + result.stderr)
+            self.assertEqual(password.encode("utf-8"), (root / "password.txt").read_bytes())
+            self.assertNotIn(password, result.stdout + result.stderr)
             return result, calls
 
     def test_failed_login_stops_before_push(self):
@@ -162,6 +163,13 @@ class DockerPushShellTests(unittest.TestCase):
         result, calls = self.run_push(0)
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertEqual(["login", "push"], calls)
+
+    def test_password_is_forwarded_literally_without_echo_option_or_escape_handling(self):
+        for password in ("-n", r"fixture\cpassword", "fixture%spassword", "fixture\npassword"):
+            with self.subTest(password=password):
+                result, calls = self.run_push(0, password)
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertEqual(["login", "push"], calls)
 
 
 if __name__ == "__main__":
