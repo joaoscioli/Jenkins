@@ -125,6 +125,13 @@ class RepositoryGuardrailTests(unittest.TestCase):
 
 
 class DockerPushShellTests(unittest.TestCase):
+    def test_verified_jars_are_required_and_fingerprinted_before_image_build(self):
+        source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
+        application = source.split("stage('Build Application')", 1)[1].split("stage('Build Docker Image')", 1)[0]
+        self.assertIn("./mvnw -B --no-transfer-progress verify", application)
+        self.assertRegex(application, r"success\s*\{\s*archiveArtifacts artifacts: 'target/\*\.jar', "
+                                     r"fingerprint: true, allowEmptyArchive: false")
+
     def run_push(self, login_status, password="fixture-password"):
         pipeline = SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile"
         source = pipeline.read_text(encoding="utf-8")

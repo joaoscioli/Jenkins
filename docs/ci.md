@@ -49,6 +49,14 @@ fail, and missing reports fail the gate. The target application must contain
 unit tests producing `target/surefire-reports/TEST-*.xml`. A failing application
 stage prevents the later image stages from running.
 
+After a successful application stage, the Docker example archives `target/*.jar`
+and records Jenkins fingerprints so reviewers can trace the build artifact.
+A missing JAR fails the archive step before image construction. The target Maven
+project must produce a JAR directly under `target/`; adapt the glob for multi-module
+projects. Fingerprints support traceability, not cryptographic artifact signing.
+The Python suite checks this pipeline contract; executing the archive step still
+requires a Jenkins controller and its artifact archiver.
+
 The registry shell block uses `set -eu` so a failed login stops before `docker push`.
 The Python suite executes that actual block with a shell function standing in for
 Docker, checking failed and successful login paths without a registry or daemon.
