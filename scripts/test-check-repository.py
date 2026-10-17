@@ -125,6 +125,11 @@ class RepositoryGuardrailTests(unittest.TestCase):
 
 
 class DockerPushShellTests(unittest.TestCase):
+    def test_registry_configuration_is_scoped_to_the_push_workspace(self):
+        source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
+        self.assertIn('withEnv(["DOCKER_CONFIG=${pwd(tmp: true)}/docker-config"])', source)
+        self.assertNotIn("sh 'docker logout || true'", source)
+
     def test_verified_jars_are_required_and_fingerprinted_before_image_build(self):
         source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
         application = source.split("stage('Build Application')", 1)[1].split("stage('Build Docker Image')", 1)[0]
@@ -132,7 +137,7 @@ class DockerPushShellTests(unittest.TestCase):
         self.assertRegex(application, r"success\s*\{\s*archiveArtifacts artifacts: 'target/\*\.jar', "
                                      r"fingerprint: true, allowEmptyArchive: false")
 
-    def run_push(self, login_status, password="fixture-password"):
+    def run_push(self, login_status, password="fixture-password", push_status=0, logout_status=0):
         pipeline = SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile"
         source = pipeline.read_text(encoding="utf-8")
         blocks = re.findall(r"sh '''(.*?)'''", source, re.DOTALL)
@@ -143,15 +148,21 @@ class DockerPushShellTests(unittest.TestCase):
             # Shell function shadows Docker: no registry, credentials or daemon needed.
             harness = root / "push.sh"
             harness.write_text('''docker() {
+  [ "$DOCKER_CONFIG" = "$EXPECTED_DOCKER_CONFIG" ] || return 90
   printf '%s\\n' "$1" >> calls.txt
   if [ "$1" = login ]; then
     cat >password.txt
     return "$LOGIN_STATUS"
   fi
+  if [ "$1" = push ]; then return "$PUSH_STATUS"; fi
+  if [ "$1" = logout ]; then return "$LOGOUT_STATUS"; fi
   return 0
 }
 ''' + push_blocks[0], encoding="utf-8")
             environment = dict(os.environ, LOGIN_STATUS=str(login_status),
+                               PUSH_STATUS=str(push_status), LOGOUT_STATUS=str(logout_status),
+                               DOCKER_CONFIG=str(root / "docker-config"),
+                               EXPECTED_DOCKER_CONFIG=str(root / "docker-config"),
                                REGISTRY_PASSWORD=password, REGISTRY_USERNAME="fixture-user",
                                IMAGE_NAME="fixture/image", IMAGE_TAG="42")
             result = subprocess.run([BASH, harness.as_posix()], cwd=root, env=environment,
@@ -164,19 +175,29 @@ class DockerPushShellTests(unittest.TestCase):
     def test_failed_login_stops_before_push(self):
         result, calls = self.run_push(7)
         self.assertEqual(7, result.returncode, result.stderr)
-        self.assertEqual(["login"], calls)
+        self.assertEqual(["login", "logout"], calls)
 
     def test_successful_login_allows_one_push(self):
         result, calls = self.run_push(0)
         self.assertEqual(0, result.returncode, result.stderr)
-        self.assertEqual(["login", "push"], calls)
+        self.assertEqual(["login", "push", "logout"], calls)
+
+    def test_failed_push_logs_out_and_preserves_the_push_exit_code(self):
+        result, calls = self.run_push(0, push_status=8, logout_status=9)
+        self.assertEqual(8, result.returncode, result.stderr)
+        self.assertEqual(["login", "push", "logout"], calls)
+
+    def test_logout_failure_does_not_turn_a_successful_push_into_failure(self):
+        result, calls = self.run_push(0, logout_status=9)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(["login", "push", "logout"], calls)
 
     def test_password_is_forwarded_literally_without_echo_option_or_escape_handling(self):
         for password in ("-n", r"fixture\cpassword", "fixture%spassword", "fixture\npassword"):
             with self.subTest(password=password):
                 result, calls = self.run_push(0, password)
                 self.assertEqual(0, result.returncode, result.stderr)
-                self.assertEqual(["login", "push"], calls)
+                self.assertEqual(["login", "push", "logout"], calls)
 
 
 if __name__ == "__main__":

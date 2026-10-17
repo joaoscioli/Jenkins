@@ -58,8 +58,13 @@ The Python suite checks this pipeline contract; executing the archive step still
 requires a Jenkins controller and its artifact archiver.
 
 The registry shell block uses `set -eu` so a failed login stops before `docker push`.
+The push stage scopes `DOCKER_CONFIG` to the job's temporary workspace, avoiding
+the shared agent's default Docker credentials. An EXIT trap logs out on both
+success and failure, using the same isolated configuration. Logout failure is
+best effort and preserves the original login/push result. The agent must isolate
+workspaces between jobs; this is configuration isolation, not a security sandbox.
 The Python suite executes that actual block with a shell function standing in for
-Docker, checking failed and successful login paths without a registry or daemon.
+Docker, checking failed login/push and logout paths without a registry or daemon.
 
 The Spring Boot quality-gates example publishes Failsafe integration-test reports
 in the integration stage's `post { always { ... } }`, including failed Maven runs.
