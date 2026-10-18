@@ -97,3 +97,5 @@ This example expects Jenkins to have:
 - Image tags should be traceable to pipeline runs or commits.
 - Registry credentials belong outside source control.
 - Build and deploy stages should be separated when release control matters.
+
+The Docker build adds the OCI label `org.opencontainers.image.revision` from the checked-out `GIT_COMMIT`. Inspect this label to trace a built image back to its source revision. The shell regression harness verifies the exact build arguments without a Docker daemon; the label records provenance but does not establish image signing or reproducibility.

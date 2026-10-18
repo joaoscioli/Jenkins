@@ -125,6 +125,25 @@ class RepositoryGuardrailTests(unittest.TestCase):
 
 
 class DockerPushShellTests(unittest.TestCase):
+    def test_image_build_records_the_checked_out_commit_as_an_oci_label(self):
+        source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
+        build = source.split("stage('Build Docker Image')", 1)[1].split("stage('Inspect Image')", 1)[0]
+        command = re.search(r"sh '([^']+)'", build).group(1)
+        with tempfile.TemporaryDirectory(prefix="jenkins-docker-build-") as temporary:
+            root = Path(temporary)
+            harness = root / "build.sh"
+            harness.write_text('docker() { printf "%s\\n" "$@" > arguments.txt; }\n' + command,
+                               encoding="utf-8")
+            revision = "abc123def456"
+            result = subprocess.run([BASH, harness.as_posix()], cwd=root,
+                                    env=dict(os.environ, GIT_COMMIT=revision,
+                                             IMAGE_NAME="fixture/image", IMAGE_TAG="42"),
+                                    capture_output=True, text=True, timeout=10)
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertEqual(["build", "--label", "org.opencontainers.image.revision=" + revision,
+                              "-t", "fixture/image:42", "."],
+                             (root / "arguments.txt").read_text(encoding="utf-8").splitlines())
+
     def test_registry_configuration_is_scoped_to_the_push_workspace(self):
         source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
         self.assertIn('withEnv(["DOCKER_CONFIG=${pwd(tmp: true)}/docker-config"])', source)
