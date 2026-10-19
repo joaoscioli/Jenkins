@@ -156,7 +156,8 @@ class DockerPushShellTests(unittest.TestCase):
         self.assertRegex(application, r"success\s*\{\s*archiveArtifacts artifacts: 'target/\*\.jar', "
                                      r"fingerprint: true, allowEmptyArchive: false")
 
-    def run_push(self, login_status, password="fixture-password", push_status=0, logout_status=0):
+    def run_push(self, login_status, password="fixture-password", push_status=0, logout_status=0,
+                 invalid_variable=None, unset=False):
         pipeline = SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile"
         source = pipeline.read_text(encoding="utf-8")
         blocks = re.findall(r"sh '''(.*?)'''", source, re.DOTALL)
@@ -184,12 +185,29 @@ class DockerPushShellTests(unittest.TestCase):
                                EXPECTED_DOCKER_CONFIG=str(root / "docker-config"),
                                REGISTRY_PASSWORD=password, REGISTRY_USERNAME="fixture-user",
                                IMAGE_NAME="fixture/image", IMAGE_TAG="42")
+            if invalid_variable:
+                if unset:
+                    environment.pop(invalid_variable, None)
+                else:
+                    environment[invalid_variable] = ""
             result = subprocess.run([BASH, harness.as_posix()], cwd=root, env=environment,
                                     capture_output=True, text=True, timeout=10)
+            if invalid_variable:
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn(invalid_variable + " must be set", result.stderr)
+                self.assertFalse((root / "calls.txt").exists(), "Docker must not run with incomplete configuration")
+                self.assertNotIn(password, result.stdout + result.stderr)
+                return result, []
             calls = (root / "calls.txt").read_text(encoding="utf-8").splitlines()
             self.assertEqual(password.encode("utf-8"), (root / "password.txt").read_bytes())
             self.assertNotIn(password, result.stdout + result.stderr)
             return result, calls
+
+    def test_missing_or_empty_configuration_stops_before_any_docker_call(self):
+        for variable in ("IMAGE_NAME", "IMAGE_TAG", "REGISTRY_USERNAME", "REGISTRY_PASSWORD"):
+            for unset in (False, True):
+                with self.subTest(variable=variable, unset=unset):
+                    self.run_push(0, invalid_variable=variable, unset=unset)
 
     def test_failed_login_stops_before_push(self):
         result, calls = self.run_push(7)

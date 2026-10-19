@@ -58,6 +58,9 @@ The Python suite checks this pipeline contract; executing the archive step still
 requires a Jenkins controller and its artifact archiver.
 
 The registry shell block uses `set -eu` so a failed login stops before `docker push`.
+It rejects missing or empty image names, tags, usernames, and passwords before
+running any Docker command. Offline Bash tests cover all eight unset/empty cases;
+this prevents an incomplete environment from reaching registry authentication.
 The push stage scopes `DOCKER_CONFIG` to the job's temporary workspace, avoiding
 the shared agent's default Docker credentials. An EXIT trap logs out on both
 success and failure, using the same isolated configuration. Logout failure is
