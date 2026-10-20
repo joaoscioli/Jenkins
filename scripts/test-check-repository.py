@@ -125,6 +125,28 @@ class RepositoryGuardrailTests(unittest.TestCase):
 
 
 class DockerPushShellTests(unittest.TestCase):
+    def test_image_inspection_requires_matching_source_revision_before_push(self):
+        source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
+        inspection = source.split("stage('Inspect Image')", 1)[1].split("stage('Push Docker Image')", 1)[0]
+        command = re.search(r"sh '''(.*?)'''", inspection, re.DOTALL).group(1)
+        for revision, expected_status in (("abc123", 0), ("other-commit", 1), ("", 1), ("<no value>", 1)):
+            with self.subTest(revision=revision), tempfile.TemporaryDirectory(prefix="jenkins-inspect-") as temporary:
+                root = Path(temporary)
+                harness = root / "inspect.sh"
+                harness.write_text('docker() { printf "%s\\n" "$@" > arguments.txt; '
+                                   'printf "%s" "$FIXTURE_REVISION"; }\n' + command, encoding="utf-8")
+                result = subprocess.run([BASH, harness.as_posix()], cwd=root,
+                                        env=dict(os.environ, GIT_COMMIT="abc123", FIXTURE_REVISION=revision,
+                                                 IMAGE_NAME="fixture/image", IMAGE_TAG="42"),
+                                        capture_output=True, text=True, timeout=10)
+                self.assertEqual(expected_status, result.returncode, result.stderr)
+                self.assertEqual(["image", "inspect", "--format",
+                                  '{{ index .Config.Labels "org.opencontainers.image.revision" }}',
+                                  "fixture/image:42"],
+                                 (root / "arguments.txt").read_text(encoding="utf-8").splitlines())
+                if expected_status:
+                    self.assertIn("Image revision does not match", result.stderr)
+
     def test_image_build_records_the_checked_out_commit_as_an_oci_label(self):
         source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
         build = source.split("stage('Build Docker Image')", 1)[1].split("stage('Inspect Image')", 1)[0]

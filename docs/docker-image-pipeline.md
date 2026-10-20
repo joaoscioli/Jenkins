@@ -28,7 +28,7 @@ Why it matters:
 Packages the Java application:
 
 ```bash
-./mvnw -B --no-transfer-progress package -DskipTests
+./mvnw -B --no-transfer-progress verify
 ```
 
 Why it matters:
@@ -41,7 +41,7 @@ Why it matters:
 Builds a Docker image tagged with the Jenkins build number:
 
 ```bash
-docker build -t $IMAGE_NAME:$IMAGE_TAG .
+docker build --label "org.opencontainers.image.revision=$GIT_COMMIT" -t "$IMAGE_NAME:$IMAGE_TAG" .
 ```
 
 Why it matters:
@@ -52,7 +52,12 @@ Why it matters:
 
 ### Inspect Image
 
-Runs `docker image inspect` to verify the image exists and expose metadata.
+Runs `docker image inspect` and requires the OCI revision label to equal the
+checked-out `GIT_COMMIT` before the push stage can run. A missing label or mismatched
+revision fails the pipeline. Offline shell tests exercise matching, mismatched and
+missing labels with a fake Docker command; a live Jenkins run is still required
+to validate controller execution. This consistency check does not authenticate
+the image or replace signing.
 
 Why it matters:
 
