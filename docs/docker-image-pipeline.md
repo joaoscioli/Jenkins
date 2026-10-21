@@ -54,8 +54,10 @@ Why it matters:
 
 Runs `docker image inspect` and requires the OCI revision label to equal the
 checked-out `GIT_COMMIT` before the push stage can run. A missing label or mismatched
-revision fails the pipeline. Offline shell tests exercise matching, mismatched and
-missing labels with a fake Docker command; a live Jenkins run is still required
+revision fails the pipeline. Missing or empty `GIT_COMMIT`, `IMAGE_NAME`, or
+`IMAGE_TAG` fails before Docker runs; a Docker inspection error preserves its exit
+code instead of being reported as a revision mismatch. Offline shell tests exercise
+matching, mismatched and missing labels with a fake Docker command; a live Jenkins run is still required
 to validate controller execution. This consistency check does not authenticate
 the image or replace signing.
 

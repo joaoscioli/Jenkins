@@ -55,6 +55,7 @@ pipeline {
                 sh '''
                     set -eu
                     : "${GIT_COMMIT:?GIT_COMMIT must be set}"
+                    : "${IMAGE_NAME:?IMAGE_NAME must be set}" "${IMAGE_TAG:?IMAGE_TAG must be set}"
                     revision=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' "$IMAGE_NAME:$IMAGE_TAG")
                     if [ "$revision" != "$GIT_COMMIT" ]; then
                         echo 'Image revision does not match the checked-out commit' >&2
