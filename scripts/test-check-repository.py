@@ -125,6 +125,33 @@ class RepositoryGuardrailTests(unittest.TestCase):
 
 
 class DockerPushShellTests(unittest.TestCase):
+    def test_build_rejects_missing_configuration_and_preserves_docker_failure(self):
+        source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
+        build = source.split("stage('Build Docker Image')", 1)[1].split("stage('Inspect Image')", 1)[0]
+        command = re.search(r"sh '''(.*?)'''", build, re.DOTALL).group(1)
+        for variable in ("GIT_COMMIT", "IMAGE_NAME", "IMAGE_TAG", None):
+            for unset in (False, True):
+                with self.subTest(variable=variable, unset=unset), tempfile.TemporaryDirectory() as temporary:
+                    root = Path(temporary)
+                    harness = root / "build.sh"
+                    harness.write_text('docker() { echo called > calls.txt; return 7; }\n' + command,
+                                       encoding="utf-8")
+                    environment = dict(os.environ, GIT_COMMIT="abc123", IMAGE_NAME="fixture/image", IMAGE_TAG="42")
+                    if variable:
+                        if unset:
+                            environment.pop(variable)
+                        else:
+                            environment[variable] = ""
+                    result = subprocess.run([BASH, harness.as_posix()], cwd=root, env=environment,
+                                            capture_output=True, text=True, timeout=10)
+                    if variable:
+                        self.assertNotEqual(0, result.returncode)
+                        self.assertIn(variable + " must be set", result.stderr)
+                        self.assertFalse((root / "calls.txt").exists())
+                    else:
+                        self.assertEqual(7, result.returncode, result.stderr)
+                        self.assertTrue((root / "calls.txt").exists())
+
     def test_inspection_rejects_incomplete_configuration_before_docker_and_preserves_docker_failure(self):
         source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
         inspection = source.split("stage('Inspect Image')", 1)[1].split("stage('Push Docker Image')", 1)[0]
@@ -178,7 +205,7 @@ class DockerPushShellTests(unittest.TestCase):
     def test_image_build_records_the_checked_out_commit_as_an_oci_label(self):
         source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
         build = source.split("stage('Build Docker Image')", 1)[1].split("stage('Inspect Image')", 1)[0]
-        command = re.search(r"sh '([^']+)'", build).group(1)
+        command = re.search(r"sh '''(.*?)'''", build, re.DOTALL).group(1)
         with tempfile.TemporaryDirectory(prefix="jenkins-docker-build-") as temporary:
             root = Path(temporary)
             harness = root / "build.sh"

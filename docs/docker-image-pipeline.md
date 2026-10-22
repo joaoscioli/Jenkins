@@ -40,6 +40,11 @@ Why it matters:
 
 Builds a Docker image tagged with the Jenkins build number:
 
+The build shell rejects missing or empty `GIT_COMMIT`, `IMAGE_NAME`, and
+`IMAGE_TAG` before Docker runs. A Docker build failure retains its exit code.
+Offline tests execute the actual shell block for these configuration failures
+and verify the successful build arguments.
+
 ```bash
 docker build --label "org.opencontainers.image.revision=$GIT_COMMIT" -t "$IMAGE_NAME:$IMAGE_TAG" .
 ```
