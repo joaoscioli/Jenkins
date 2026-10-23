@@ -280,6 +280,11 @@ class DockerPushShellTests(unittest.TestCase):
             self.assertNotIn(password, result.stdout + result.stderr)
             return result, calls
 
+    def test_missing_registry_workspace_stops_before_login_push_or_logout(self):
+        for unset in (False, True):
+            with self.subTest(unset=unset):
+                self.run_push(0, invalid_variable="DOCKER_CONFIG", unset=unset)
+
     def test_missing_or_empty_configuration_stops_before_any_docker_call(self):
         for variable in ("IMAGE_NAME", "IMAGE_TAG", "REGISTRY_USERNAME", "REGISTRY_PASSWORD"):
             for unset in (False, True):
