@@ -234,7 +234,7 @@ class DockerPushShellTests(unittest.TestCase):
                                      r"fingerprint: true, allowEmptyArchive: false")
 
     def run_push(self, login_status, password="fixture-password", push_status=0, logout_status=0,
-                 invalid_variable=None, unset=False):
+                 invalid_variable=None, unset=False, xtrace=False):
         pipeline = SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile"
         source = pipeline.read_text(encoding="utf-8")
         blocks = re.findall(r"sh '''(.*?)'''", source, re.DOTALL)
@@ -267,7 +267,7 @@ class DockerPushShellTests(unittest.TestCase):
                     environment.pop(invalid_variable, None)
                 else:
                     environment[invalid_variable] = ""
-            result = subprocess.run([BASH, harness.as_posix()], cwd=root, env=environment,
+            result = subprocess.run([BASH, *(["-x"] if xtrace else []), harness.as_posix()], cwd=root, env=environment,
                                     capture_output=True, text=True, timeout=10)
             if invalid_variable:
                 self.assertNotEqual(0, result.returncode)
@@ -284,6 +284,13 @@ class DockerPushShellTests(unittest.TestCase):
         for unset in (False, True):
             with self.subTest(unset=unset):
                 self.run_push(0, invalid_variable="DOCKER_CONFIG", unset=unset)
+
+    def test_inherited_shell_tracing_cannot_expose_registry_password(self):
+        for login_status in (0, 7):
+            with self.subTest(login_status=login_status):
+                result, calls = self.run_push(login_status, password="private-registry-secret", xtrace=True)
+                self.assertEqual(login_status, result.returncode, result.stderr)
+                self.assertEqual(["login", "push", "logout"] if login_status == 0 else ["login", "logout"], calls)
 
     def test_missing_or_empty_configuration_stops_before_any_docker_call(self):
         for variable in ("IMAGE_NAME", "IMAGE_TAG", "REGISTRY_USERNAME", "REGISTRY_PASSWORD"):

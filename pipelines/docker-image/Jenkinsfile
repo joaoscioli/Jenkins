@@ -84,6 +84,7 @@ pipeline {
                 ]) {
                     withEnv(["DOCKER_CONFIG=${pwd(tmp: true)}/docker-config"]) {
                         sh '''
+                            set +x
                             set -eu
                             : "${DOCKER_CONFIG:?DOCKER_CONFIG must be set}"
                             : "${IMAGE_NAME:?IMAGE_NAME must be set}" "${IMAGE_TAG:?IMAGE_TAG must be set}"
