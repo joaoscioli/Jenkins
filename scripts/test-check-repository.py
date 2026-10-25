@@ -24,7 +24,8 @@ DOCUMENTS = (
 class RepositoryGuardrailTests(unittest.TestCase):
     def check_fixture(self, missing_guardrail=None, missing_document=None, missing_pipeline=False,
                       empty_pipelines=False, pipeline_note=False, helper_script=None,
-                      commented_guardrail=None, checkout_option="skipDefaultCheckout(true)"):
+                      commented_guardrail=None, checkout_option="skipDefaultCheckout(true)",
+                      concurrency_option="disableConcurrentBuilds()"):
         with tempfile.TemporaryDirectory(prefix="jenkins-guardrails-") as temporary:
             root = Path(temporary)
             (root / "scripts").mkdir()
@@ -37,7 +38,8 @@ class RepositoryGuardrailTests(unittest.TestCase):
                 pipeline.parent.mkdir(parents=True)
                 pipeline.write_text("\n".join(
                     "    // " + value if value == commented_guardrail else
-                    checkout_option if value == "skipDefaultCheckout(true)" else value
+                    checkout_option if value == "skipDefaultCheckout(true)" else
+                    concurrency_option if value == "disableConcurrentBuilds()" else value
                     for value in GUARDRAILS if value != missing_guardrail
                 ), encoding="utf-8")
             if pipeline_note:
@@ -56,6 +58,18 @@ class RepositoryGuardrailTests(unittest.TestCase):
                 [BASH, (root / "scripts/check-repository.sh").as_posix()],
                 cwd=SCRIPT.parent, capture_output=True, text=True, timeout=10,
             )
+
+    def test_concurrent_builds_queue_instead_of_aborting_an_active_deployment(self):
+        for option in ("disableConcurrentBuilds()", "disableConcurrentBuilds(abortPrevious: false)"):
+            with self.subTest(option=option):
+                result = self.check_fixture(concurrency_option=option)
+                self.assertEqual(0, result.returncode, result.stderr)
+        for option in ("disableConcurrentBuilds(abortPrevious: true)", "disableConcurrentBuilds(false)"):
+            with self.subTest(option=option):
+                result = self.check_fixture(concurrency_option=option)
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn("queue without aborting", result.stderr)
+                self.assertIn("pipelines/example/Jenkinsfile", result.stderr)
 
     def test_complete_repository_passes_from_another_directory(self):
         result = self.check_fixture()

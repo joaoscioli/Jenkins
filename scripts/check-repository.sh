@@ -34,6 +34,10 @@ for directory in pipelines/*; do
     echo "Implicit checkout must be disabled: $file" >&2
     exit 1
   fi
+  if ! grep -Eq 'disableConcurrentBuilds\([[:space:]]*(abortPrevious[[:space:]]*:[[:space:]]*false[[:space:]]*)?\)' <<< "$active_lines"; then
+    echo "Concurrent builds must queue without aborting the active build: $file" >&2
+    exit 1
+  fi
 done
 
 if [[ "$pipeline_count" -eq 0 ]]; then

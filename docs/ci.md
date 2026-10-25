@@ -11,6 +11,8 @@ the Jenkins pipeline examples.
 - Each pipeline directory contains a Jenkinsfile, including newly added directories.
 - Each example declares a timeout, skips implicit checkout, prevents concurrent
   builds and performs an explicit `checkout scm`.
+- Concurrent builds queue with `disableConcurrentBuilds()` or explicit
+  `abortPrevious: false`; aborting an active deployment fails the textual gate.
 - Core documentation files remain present.
 - `skipDefaultCheckout` uses `true` or its empty default; `false` fails the gate.
 - Every `scripts/*.sh` file passes `bash -n` syntax validation without execution.
