@@ -25,7 +25,7 @@ class RepositoryGuardrailTests(unittest.TestCase):
     def check_fixture(self, missing_guardrail=None, missing_document=None, missing_pipeline=False,
                       empty_pipelines=False, pipeline_note=False, helper_script=None,
                       commented_guardrail=None, checkout_option="skipDefaultCheckout(true)",
-                      concurrency_option="disableConcurrentBuilds()"):
+                      concurrency_option="disableConcurrentBuilds()", timeout_option="timeout(time: 5)"):
         with tempfile.TemporaryDirectory(prefix="jenkins-guardrails-") as temporary:
             root = Path(temporary)
             (root / "scripts").mkdir()
@@ -39,7 +39,8 @@ class RepositoryGuardrailTests(unittest.TestCase):
                 pipeline.write_text("\n".join(
                     "    // " + value if value == commented_guardrail else
                     checkout_option if value == "skipDefaultCheckout(true)" else
-                    concurrency_option if value == "disableConcurrentBuilds()" else value
+                    concurrency_option if value == "disableConcurrentBuilds()" else
+                    timeout_option if value == "timeout(time: 5)" else value
                     for value in GUARDRAILS if value != missing_guardrail
                 ), encoding="utf-8")
             if pipeline_note:
@@ -69,6 +70,19 @@ class RepositoryGuardrailTests(unittest.TestCase):
                 result = self.check_fixture(concurrency_option=option)
                 self.assertNotEqual(0, result.returncode)
                 self.assertIn("queue without aborting", result.stderr)
+                self.assertIn("pipelines/example/Jenkinsfile", result.stderr)
+
+    def test_timeout_requires_positive_literal_time(self):
+        for option in ("timeout(time: 1)", "timeout( time : 30, unit: 'MINUTES')"):
+            with self.subTest(option=option):
+                result = self.check_fixture(timeout_option=option)
+                self.assertEqual(0, result.returncode, result.stderr)
+        for option in ("timeout(time: 0)", "timeout(time: -1)", "timeout(time: 1.5)",
+                       "timeout(time: '5')", "timeout(time: 1 + 2)"):
+            with self.subTest(option=option):
+                result = self.check_fixture(timeout_option=option)
+                self.assertEqual(1, result.returncode, result.stderr)
+                self.assertIn("Timeout must start with a positive integer time", result.stderr)
                 self.assertIn("pipelines/example/Jenkinsfile", result.stderr)
 
     def test_complete_repository_passes_from_another_directory(self):

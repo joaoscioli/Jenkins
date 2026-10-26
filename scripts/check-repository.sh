@@ -30,6 +30,11 @@ for directory in pipelines/*; do
       exit 1
     fi
   done
+  # Keep this intentionally narrow: examples use a positive literal time first.
+  if ! grep -Eq 'timeout\([[:space:]]*time[[:space:]]*:[[:space:]]*[1-9][0-9]*[[:space:]]*[,)]' <<< "$active_lines"; then
+    echo "Timeout must start with a positive integer time: $file" >&2
+    exit 1
+  fi
   if ! grep -Eq 'skipDefaultCheckout\([[:space:]]*(true[[:space:]]*)?\)' <<< "$active_lines"; then
     echo "Implicit checkout must be disabled: $file" >&2
     exit 1
