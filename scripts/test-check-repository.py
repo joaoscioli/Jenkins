@@ -331,6 +331,13 @@ class DockerPushShellTests(unittest.TestCase):
         self.assertEqual(7, result.returncode, result.stderr)
         self.assertEqual(["login", "logout"], calls)
 
+    def test_failed_login_status_survives_logout_failure_even_with_inherited_tracing(self):
+        for xtrace in (False, True):
+            with self.subTest(xtrace=xtrace):
+                result, calls = self.run_push(7, logout_status=9, xtrace=xtrace)
+                self.assertEqual(7, result.returncode, result.stderr)
+                self.assertEqual(["login", "logout"], calls)
+
     def test_successful_login_allows_one_push(self):
         result, calls = self.run_push(0)
         self.assertEqual(0, result.returncode, result.stderr)
