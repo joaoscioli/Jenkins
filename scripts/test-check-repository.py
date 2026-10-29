@@ -270,6 +270,28 @@ class DockerPushShellTests(unittest.TestCase):
                              (root / "arguments.txt").read_text(encoding="utf-8").splitlines())
             self.assertFalse((root / "injected").exists())
 
+    def test_inspection_keeps_image_and_revision_literal_without_shell_execution(self):
+        source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
+        inspection = source.split("stage('Inspect Image')", 1)[1].split("stage('Push Docker Image')", 1)[0]
+        command = re.search(r"sh '''(.*?)'''", inspection, re.DOTALL).group(1)
+        with tempfile.TemporaryDirectory(prefix="jenkins-inspect-quoting-") as temporary:
+            root = Path(temporary)
+            harness = root / "inspect.sh"
+            harness.write_text('docker() { printf "%s\\n" "$@" > arguments.txt; '
+                               'printf "%s" "$GIT_COMMIT"; }\n' + command, encoding="utf-8")
+            revision = "revision with spaces; $(touch injected)"
+            image = "fixture/* image"
+            tag = "42; `touch injected`"
+            result = subprocess.run([BASH, harness.as_posix()], cwd=root,
+                                    env=dict(os.environ, GIT_COMMIT=revision, IMAGE_NAME=image, IMAGE_TAG=tag),
+                                    capture_output=True, text=True, timeout=10)
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertEqual(["image", "inspect", "--format",
+                              '{{ index .Config.Labels "org.opencontainers.image.revision" }}',
+                              image + ":" + tag],
+                             (root / "arguments.txt").read_text(encoding="utf-8").splitlines())
+            self.assertFalse((root / "injected").exists())
+
     def test_registry_configuration_is_scoped_to_the_push_workspace(self):
         source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")
         self.assertIn('withEnv(["DOCKER_CONFIG=${pwd(tmp: true)}/docker-config"])', source)
