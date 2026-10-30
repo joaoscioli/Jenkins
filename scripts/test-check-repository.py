@@ -152,6 +152,17 @@ class RepositoryGuardrailTests(unittest.TestCase):
                 self.assertIn("No pipeline examples found under pipelines/.", result.stderr)
 
 
+class QualityGateArtifactTests(unittest.TestCase):
+    def test_quality_gate_archives_verified_artifacts_without_repackaging(self):
+        source = (SCRIPT.parent.parent / "pipelines/spring-boot-quality-gates/Jenkinsfile").read_text(encoding="utf-8")
+        verified, archive = source.split("stage('Archive Verified Artifacts')", 1)
+        self.assertIn("./mvnw -B --no-transfer-progress verify -Pintegration-tests", verified)
+        self.assertIn("**/target/failsafe-reports/TEST-*.xml", verified)
+        self.assertIn("archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true, allowEmptyArchive: false", archive)
+        self.assertNotRegex(archive, r"\bsh\s")
+        self.assertNotIn("package -DskipTests", source)
+
+
 class DockerPushShellTests(unittest.TestCase):
     def test_build_rejects_missing_configuration_and_preserves_docker_failure(self):
         source = (SCRIPT.parent.parent / "pipelines/docker-image/Jenkinsfile").read_text(encoding="utf-8")

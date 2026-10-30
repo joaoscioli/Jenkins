@@ -31,7 +31,12 @@ The stages are intentionally simple:
 - `Compile`;
 - `Unit Tests`;
 - `Integration Tests`;
-- `Package`.
+- `Archive Verified Artifacts`.
+
+The integration stage runs Maven `verify`, which packages the application before
+running integration tests. After the gate passes, archive those existing JARs
+with fingerprints and require at least one matching artifact. Rebuilding with
+`package -DskipTests` after verification can replace the bytes that were tested.
 
 ## Interview Talking Point
 

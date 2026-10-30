@@ -49,14 +49,11 @@ pipeline {
             }
         }
 
-        stage('Package') {
+        stage('Archive Verified Artifacts') {
             steps {
-                sh './mvnw -B --no-transfer-progress package -DskipTests'
-            }
-            post {
-                success {
-                    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-                }
+                // Maven verify already packages the application before integration tests.
+                // Archive those bytes rather than rebuilding after the quality gate.
+                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true, allowEmptyArchive: false
             }
         }
     }
