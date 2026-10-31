@@ -60,6 +60,16 @@ class RepositoryGuardrailTests(unittest.TestCase):
                 cwd=SCRIPT.parent, capture_output=True, text=True, timeout=10,
             )
 
+    def test_timeout_rejects_unknown_or_dynamic_units(self):
+        for unit in ("'MINUTE'", "'minutes'", "env.TIMEOUT_UNIT"):
+            with self.subTest(unit=unit):
+                result = self.check_fixture(timeout_option=f"timeout(time: 5, unit: {unit})")
+                self.assertEqual(1, result.returncode, result.stderr)
+                self.assertIn("Timeout unit must be a supported literal TimeUnit", result.stderr)
+        for unit in ("SECONDS", "MINUTES", "HOURS", "DAYS"):
+            result = self.check_fixture(timeout_option=f"timeout(time: 5, unit: '{unit}')")
+            self.assertEqual(0, result.returncode, result.stderr)
+
     def test_concurrent_builds_queue_instead_of_aborting_an_active_deployment(self):
         for option in ("disableConcurrentBuilds()", "disableConcurrentBuilds(abortPrevious: false)"):
             with self.subTest(option=option):

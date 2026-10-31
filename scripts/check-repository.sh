@@ -43,6 +43,12 @@ for directory in pipelines/*; do
     echo "Concurrent builds must queue without aborting the active build: $file" >&2
     exit 1
   fi
+  # Examples use canonical literal TimeUnit names; dynamic units need native validation.
+  if grep -Eq "timeout\([^)]*unit[[:space:]]*:" <<< "$active_lines" &&
+     ! grep -Eq "timeout\([^)]*unit[[:space:]]*:[[:space:]]*'(NANOSECONDS|MICROSECONDS|MILLISECONDS|SECONDS|MINUTES|HOURS|DAYS)'[[:space:]]*\)" <<< "$active_lines"; then
+    echo "Timeout unit must be a supported literal TimeUnit: $file" >&2
+    exit 1
+  fi
 done
 
 if [[ "$pipeline_count" -eq 0 ]]; then
