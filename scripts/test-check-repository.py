@@ -163,6 +163,13 @@ class RepositoryGuardrailTests(unittest.TestCase):
 
 
 class MavenCleanBuildTests(unittest.TestCase):
+    def test_maven_archive_requires_a_fingerprinted_jar_after_package(self):
+        source = (SCRIPT.parent.parent / "pipelines/java-maven/Jenkinsfile").read_text(encoding="utf-8")
+        before, archive = source.split("stage('Archive Artifacts')", 1)
+        self.assertIn("stage('Package')", before)
+        self.assertIn("archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true, allowEmptyArchive: false", archive)
+        self.assertNotRegex(archive, r"\bsh\s")
+
     def test_maven_pipeline_cleans_stale_outputs_before_tests_and_packages_afterward(self):
         source = (SCRIPT.parent.parent / "pipelines/java-maven/Jenkinsfile").read_text(encoding="utf-8")
         test, package = source.split("stage('Package')", 1)
