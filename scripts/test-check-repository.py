@@ -162,6 +162,16 @@ class RepositoryGuardrailTests(unittest.TestCase):
                 self.assertIn("No pipeline examples found under pipelines/.", result.stderr)
 
 
+class MavenCleanBuildTests(unittest.TestCase):
+    def test_maven_pipeline_cleans_stale_outputs_before_tests_and_packages_afterward(self):
+        source = (SCRIPT.parent.parent / "pipelines/java-maven/Jenkinsfile").read_text(encoding="utf-8")
+        test, package = source.split("stage('Package')", 1)
+        self.assertIn("./mvnw -B --no-transfer-progress clean test", test)
+        self.assertIn("allowEmptyResults: false", test)
+        self.assertIn("./mvnw -B --no-transfer-progress package -DskipTests", package)
+        self.assertNotIn("clean package", package)
+
+
 class QualityGateArtifactTests(unittest.TestCase):
     def test_quality_gate_archives_verified_artifacts_without_repackaging(self):
         source = (SCRIPT.parent.parent / "pipelines/spring-boot-quality-gates/Jenkinsfile").read_text(encoding="utf-8")

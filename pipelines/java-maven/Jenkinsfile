@@ -23,7 +23,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh './mvnw -B --no-transfer-progress test'
+                sh './mvnw -B --no-transfer-progress clean test'
             }
             post {
                 always {
